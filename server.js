@@ -81,6 +81,39 @@ app.get('/api/candidate/:id', (req, res) => {
     });
 });
 
+//SELECT ALL FROM PARTIES
+app.get('/api/parties', (req, res) => {
+    const sql = `SELECT * FROM parties`;
+    const params = [];
+    db.all(sql, params, (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
+});
+
+//SELECT BY ID FROM PARTIES
+app.get('/api/party:id', (req, res) => {
+    const sql = `SELECT * FROM parties WHERE id = ?`;
+    const params = [req.params.id];
+    db.get(sql, params, (err, row) => {
+        if (err) {
+            res.status(400).json({ error : err.message });
+            return;
+        }
+
+        res.json({
+            message: 'success',
+            data: row
+        });
+    });
+});
+
 // SELECT ALL FROM CANDIDATES
 app.get('/api/candidates', (req, res) => {
     const sql = `SELECT * FROM candidates`;
@@ -96,6 +129,19 @@ app.get('/api/candidates', (req, res) => {
             message: 'gucci',
             data: rows
         });
+    });
+});
+
+//DELETE PARTY BY ID
+app.delete('/api/party/:id', (req, res) => {
+    const sql = `DELETE FROM parties WHERE id = ?`;
+    const params = [req.params.id];
+    db.run(sql, params, function(err, result) {
+        if (err) {
+            res.status(400).json({ error: res.message });
+            return;
+        }
+        res.json({ message: 'successfully deleted', changes: this.changes });
     });
 });
 
